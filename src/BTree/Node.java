@@ -89,19 +89,45 @@ public class Node {
 		return children[i];
 	}
 	
-	public void addChildren(Node node) {
-		int valChild = node.getKeys()[0];
-		int i=0;
-		//GÃ©rer l'insertion + le dÃ©calage des enfants en comparant valChild avec les valeurs de keys[] (valeurs du pÃ¨re)
+	//Fonction appelée uniquement dans le cas où il est possible d'ajouter l'enfant. Cette fonction ne peut pas traiter d'erreur
+	public boolean addChildren(Node node) {
 		
+		//Cas où il n'y a pas encore d'enfant
+		if(children[0] == null) {
+			children[0] = node;
+			return true;
+		}
+		
+		int valChild = node.getKeys()[0];
+		int i;
+		Node aux1;
+		Node aux2;
+		for(i =0; i<order-1; i++) {	
+			if ((valChild < keys[i])) {
+				aux2 = node;
+				for(int j = i; j< order; j++) {
+					aux1 = children[j];
+					children[j] = aux2;
+					aux2 = aux1;
+				}
+				return true;
+			}	
+		}
+		children[order-1] = node;
+		return true;
 	}
 	
 	public String toString() {
-		String s = "[";
+		String s = "Key : [";
 		for (int i =0; i<order-2; i++) {
 			s = s+ keys[i] + ",";
 		}
 		s = s+ keys[order-2] + "]";
+		s+="\nChildren : [";
+		for (int i =0; i<order-1; i++) {
+			s = s+ children[i] + ",";
+		}
+		s = s+ children[order-1] + "]";
 		return s;
 	}
 	
@@ -125,9 +151,9 @@ public class Node {
 		return children;
 	}
 	
-	public void removeAll() {
-		for(Integer i : keys) {
-			i = null;
+	public void removeAllKeys() {
+		for(int i =0; i<order-1; i++) {
+			keys[i] = null;
 		}
 	}
 	
