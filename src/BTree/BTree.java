@@ -24,7 +24,7 @@ public class BTree {
 	 */
 	public void insert(Integer key) {
 		// Il faut pouvoir rappeler Insert sans utiliser la fonction de recherche pour
-		// modifier le père du noeud auquel on a rajouté la key (dans le cas où le noeud
+		// modifier le pere du noeud auquel on a rajoute la key (dans le cas ou le noeud
 		// est full)
 		Node node = recherche(key, root);
 		if (!node.isFull()) {
@@ -37,8 +37,8 @@ public class BTree {
 	}
 
 	/**
-	 * Insert une valeur précise dans un noeud donné, et gère la progéniture
-	 * (appelée dans split)
+	 * Insert une valeur precise dans un noeud donne, et gere la progeniture
+	 * (appelee dans split)
 	 * 
 	 * @param key
 	 * @param node
@@ -66,8 +66,8 @@ public class BTree {
 	}
 
 	/**
-	 * Split un noeud Q1 (de père Q) full en deux noeuds Q1 et Q2, puis appelle la
-	 * fonction insertIn qui ajoute la médiane dans le père de Q1 et Q2;
+	 * Split un noeud Q1 (de pere Q) full en deux noeuds Q1 et Q2, puis appelle la
+	 * fonction insertIn qui ajoute la mediane dans le pere de Q1 et Q2;
 	 * 
 	 * @param Q1
 	 * @param key
@@ -92,7 +92,7 @@ public class BTree {
 			Integer val = temporary.get(i);
 			
 			
-			//LES FONCTIONS ADD N'ADD RIEN PUTAIN
+			//LA FONCTION ADD N'ADD RIEN SUR Q1 PUTAIN
 			
 			
 			if (i < Math.round(order / 2)) {
@@ -100,11 +100,17 @@ public class BTree {
 			}
 			if (i > Math.round(order / 2)) {
 				Q2.add(val);
-			}
-			
+			}	
 		}
-		
+		/**
+		System.out.println(Q1);
+		System.out.println("\n");
+		System.out.println(Q2);
+		System.out.println("\n");
+		System.out.println(Q);
+		**/
 		insertIn(median, Q, Q2);
+		
 
 	}
 

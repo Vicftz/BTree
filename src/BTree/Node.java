@@ -89,20 +89,18 @@ public class Node {
 		return children[i];
 	}
 	
-	//Fonction appelée uniquement dans le cas où il est possible d'ajouter l'enfant. Cette fonction ne peut pas traiter d'erreur
+	//Fonction appelee uniquement dans le cas ou il est possible d'ajouter l'enfant. Cette fonction ne peut pas traiter d'erreur
 	public boolean addChildren(Node node) {
-		
-		//Cas où il n'y a pas encore d'enfant
-		if(children[0] == null) {
-			children[0] = node;
-			return true;
-		}
 		
 		int valChild = node.getKeys()[0];
 		int i;
 		Node aux1;
 		Node aux2;
 		for(i =0; i<order-1; i++) {	
+			if(children[i] == null) {
+				children[i] = node;
+				return true;
+			}
 			if ((valChild < keys[i])) {
 				aux2 = node;
 				for(int j = i; j< order; j++) {
@@ -111,7 +109,8 @@ public class Node {
 					aux2 = aux1;
 				}
 				return true;
-			}	
+			}
+			
 		}
 		children[order-1] = node;
 		return true;
@@ -155,6 +154,7 @@ public class Node {
 		for(int i =0; i<order-1; i++) {
 			keys[i] = null;
 		}
+		countOfRecords = 0;
 	}
 	
 /*	public Node split() {
