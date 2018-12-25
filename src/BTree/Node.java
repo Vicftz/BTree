@@ -1,5 +1,8 @@
 package BTree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Node {
 
 	private int order;
@@ -7,26 +10,26 @@ public class Node {
 	private Node[] children;
 	private Node father;
 	private int countOfRecords = 0;
-	
+
 	public Node(int order, Node father) {
 		this.order = order;
 		this.father = father;
 		keys = new Integer[order-1];
 		children = new Node[order];
 	}
-	
+
 	public Node(int order) {
 		this.order = order;
 		keys = new Integer[order-1];
 		children = new Node[order];
 	}
-	
+
 	public boolean add(Integer key) {
-		
+
 		if ((countOfRecords == (order-1))||(key == null)) {
 			return false;
 		}
-		
+
 		else {
 			countOfRecords++;
 			int i=0, j=0;
@@ -45,11 +48,11 @@ public class Node {
 				aux1 = aux2;
 			}
 			return true;
-			
+
 		}
 	}
-	
-	
+
+
 	public int positionInsert(Integer key) {
 		if(key == null) {
 			return 0;
@@ -63,7 +66,7 @@ public class Node {
 		}
 		return i;	
 	}
-	
+
 	/**
 	 * Indique par un boolean si le noeud est une feuille de l'arbre
 	 * @return 
@@ -71,8 +74,8 @@ public class Node {
 	public boolean isLeaf() {
 		return (children[0] == null);
 	}
-	
-	
+
+
 	/**
 	 * To look for the corresponding children for a given key 
 	 * @param key the key for which the corresponding children is searched
@@ -88,10 +91,10 @@ public class Node {
 		}
 		return children[i];
 	}
-	
+
 	//Fonction appelee uniquement dans le cas ou il est possible d'ajouter l'enfant. Cette fonction ne peut pas traiter d'erreur
 	public boolean addChildren(Node node) {
-		
+
 		int valChild = node.getKeys()[0];
 		int i;
 		Node aux1;
@@ -110,12 +113,12 @@ public class Node {
 				}
 				return true;
 			}
-			
+
 		}
 		children[order-1] = node;
 		return true;
 	}
-	
+
 	public String toString() {
 		String s = "Key : [";
 		for (int i =0; i<order-2; i++) {
@@ -129,35 +132,132 @@ public class Node {
 		s = s+ children[order-1] + "]";
 		return s;
 	}
-	
+
+	//essais
+	public String display() {
+		String s = "[";
+		for (int i =0; i<order-2; i++) {
+			s = s+ keys[i] + ",";
+		}
+		s = s+ keys[order-2] + "]";
+		return s;
+	}
+
+	private static String displayLevel(List<Node[]> childrenList) {
+		String s = "";
+		String n = "";
+		for (int i = 0;i<childrenList.get(0)[0].order+2; i++) {
+			n = n + " ";
+		}
+		List<Node[]> level = childrenList;
+		List<Node[]> temp = new ArrayList<>();
+		Node[] currentChildren;
+
+		while (!level.isEmpty()) {
+			if (!(temp.isEmpty())) {
+				temp.removeAll(temp);
+			}
+			for (int i = 0; i < level.size();i++) {
+				currentChildren = level.get(i);
+				for (Node child : currentChildren) {
+					if (child != null) {
+						for (int j = 0; j < Math.floor(child.countOfChildren()/2);j++) {
+							s = s + n;
+						}
+						s = s + child.display() + " ";
+						temp.add(child.getChildren());
+					}
+				}
+			}
+			s = s+ "\n"+ "\n";
+			
+			level.removeAll(level);
+			level.addAll(temp);
+
+		}
+
+
+		return s;
+	}
+
+	//essais
+	public String toString2() {
+		String n = "";
+		for (int i = 0;i<order+2; i++) {
+			n = n + " ";
+		}
+		String s = "";
+		for (int j = 0; j < Math.floor(this.countOfChildren()/2);j++) {
+			s = s + n;
+		}
+		s = s + this.display() + "\n" + "\n";
+		List<Node[]> init = new ArrayList<>();
+		init.add(children);
+		if (children[0]==null) {
+			return s;
+		}
+		return s+displayLevel(init);
+	}
+
+
+
+	public int countOfChildren() {
+		int s = 0;
+		Node child = children[s];
+		while ((child != null)&&s<order-1) {
+			s++;
+			child=children[s];
+		}
+		return s;
+	}
+
+	public int countOfLeaf() {
+		if (this.isLeaf()) {
+			return 1;
+		}
+		int countOfLeaf = 0;
+		for (Node node : children) {
+			if (node != null) {
+				if (node.isLeaf()) {
+					countOfLeaf++;
+				}
+				else {
+					countOfLeaf = countOfLeaf + node.countOfLeaf();
+				}
+			}
+
+		}
+		return countOfLeaf;
+	}
+
 	public boolean isFull() {
 		return (countOfRecords == order -1);
 	}
-	
+
 	public Integer[] getKeys() {
 		return keys;
 	}
-	
+
 	public Node getFather() {
 		return father;
 	}
-	
+
 	public void setFather(Node father) {
 		this.father = father;
 	}
-	
+
 	public Node[] getChildren() {
 		return children;
 	}
-	
+
 	public void removeAllKeys() {
 		for(int i =0; i<order-1; i++) {
 			keys[i] = null;
 		}
 		countOfRecords = 0;
 	}
-	
-/*	public Node split() {
+
+	/*	public Node split() {
 		Integer mediane = 40;
 		Node root = new Node(order);
 		root.add(mediane);
@@ -175,7 +275,7 @@ public class Node {
 		root.setChildren(children2);
 		return root;
 	}
-*/
-	
-	
+	 */
+
+
 }

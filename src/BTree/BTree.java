@@ -130,5 +130,14 @@ public class BTree {
 	public String toString() {
 		return root.toString();
 	}
+	
+	public String toString2() {
+		return root.toString2();
+	}
+		
+	
+	public int countOfLeaf() {
+		return root.countOfLeaf();
+	}
 
 }
