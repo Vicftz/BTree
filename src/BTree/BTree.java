@@ -23,9 +23,9 @@ public class BTree {
 	 * @param key
 	 */
 	public void insert(Integer key) {
-		// Il faut pouvoir rappeler Insert sans utiliser la fonction de recherche pour
-		// modifier le pere du noeud auquel on a rajoute la key (dans le cas ou le noeud
-		// est full)
+		if (rechercheElem(key, root)) {
+			throw new IllegalArgumentException(key + " is already in the tree");
+		}
 		Node node = recherche(key, root);
 		if (!node.isFull()) {
 			node.add(key);
@@ -48,7 +48,7 @@ public class BTree {
 		if (!node.isFull()) {
 			node.add(key);
 			node.addChildren(children);
-		} else {
+		} else {    //Si le noeud est full, on laisse tomber le children
 			split(node, key);
 
 		}
@@ -88,17 +88,16 @@ public class BTree {
 		}
 		Node Q2 = new Node(order, Q);
 		Q1.removeAllKeys();
-		for (int i = 0; i < order; i++) {
-			Integer val = temporary.get(i);
+		for (Integer val : temporary) {
 			
 			
 			//LA FONCTION ADD N'ADD RIEN SUR Q1 PUTAIN
 			
 			
-			if (i < Math.round(order / 2)) {
+			if (val < median) {
 				Q1.add(val);
 			}
-			if (i > Math.round(order / 2)) {
+			if (val > median) {
 				Q2.add(val);
 			}	
 		}
@@ -118,9 +117,7 @@ public class BTree {
 		if (node == null) {
 			return false;
 		}
-		Integer[] keys = node.getKeys();
-		Node[] childrens = node.getChildren();
-		if(Arrays.asList(keys).contains(key)){
+		if(Arrays.asList(node.getKeys()).contains(key)){
 			return true;
 		}else {
 			return rechercheElem(key,node.goodChildren(key));
@@ -131,10 +128,6 @@ public class BTree {
 		return root.toString();
 	}
 	
-	public String toString2() {
-		return root.toString2();
-	}
-		
 	
 	public int countOfLeaf() {
 		return root.countOfLeaf();

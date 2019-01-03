@@ -1,6 +1,7 @@
 package BTree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Node {
@@ -25,6 +26,10 @@ public class Node {
 	}
 
 	public boolean add(Integer key) {
+		
+		if(Arrays.asList(keys).contains(key)){
+			throw new IllegalArgumentException(key + " is already in this Node");
+		}
 
 		if ((countOfRecords == (order-1))||(key == null)) {
 			return false;
@@ -82,6 +87,9 @@ public class Node {
 	 * @return the children of the node in which the key is 
 	 */
 	public Node goodChildren(Integer key) {
+		if (countOfRecords == 0) {
+			return null;
+		}
 		if(key > keys[countOfRecords-1]) {
 			return children[countOfRecords];
 		}
@@ -119,23 +127,17 @@ public class Node {
 		return true;
 	}
 
-	public String toString() {
-		String s = "Key : [";
-		for (int i =0; i<order-2; i++) {
-			s = s+ keys[i] + ",";
-		}
-		s = s+ keys[order-2] + "]";
-		s+="\nChildren : [";
-		for (int i =0; i<order-1; i++) {
-			s = s+ children[i] + ",";
-		}
-		s = s+ children[order-1] + "]";
-		return s;
-	}
 
-	//essais
 	public String display() {
-		String s = "[";
+		String n = "";
+		for (int i = 0;i<order+2; i++) {
+			n = n + " ";
+		}
+		String s = "";
+		for (int j = 0; j < Math.floor(countOfLeaf()/2);j++) {
+			s = s + n;
+		}
+		s = s + "[";
 		for (int i =0; i<order-2; i++) {
 			s = s+ keys[i] + ",";
 		}
@@ -145,10 +147,6 @@ public class Node {
 
 	private static String displayLevel(List<Node[]> childrenList) {
 		String s = "";
-		String n = "";
-		for (int i = 0;i<childrenList.get(0)[0].order+2; i++) {
-			n = n + " ";
-		}
 		List<Node[]> level = childrenList;
 		List<Node[]> temp = new ArrayList<>();
 		Node[] currentChildren;
@@ -161,9 +159,6 @@ public class Node {
 				currentChildren = level.get(i);
 				for (Node child : currentChildren) {
 					if (child != null) {
-						for (int j = 0; j < Math.floor(child.countOfChildren()/2);j++) {
-							s = s + n;
-						}
 						s = s + child.display() + " ";
 						temp.add(child.getChildren());
 					}
@@ -180,17 +175,8 @@ public class Node {
 		return s;
 	}
 
-	//essais
-	public String toString2() {
-		String n = "";
-		for (int i = 0;i<order+2; i++) {
-			n = n + " ";
-		}
-		String s = "";
-		for (int j = 0; j < Math.floor(this.countOfChildren()/2);j++) {
-			s = s + n;
-		}
-		s = s + this.display() + "\n" + "\n";
+	public String toString() {
+		String s = this.display() + "\n" + "\n";
 		List<Node[]> init = new ArrayList<>();
 		init.add(children);
 		if (children[0]==null) {
