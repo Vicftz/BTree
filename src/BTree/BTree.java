@@ -30,7 +30,7 @@ public class BTree {
 		if (!node.isFull()) {
 			node.add(key);
 		} else {
-			split(node, key);
+			split(node, key,null);
 
 		}
 
@@ -49,7 +49,7 @@ public class BTree {
 			node.add(key);
 			node.addChildren(children);
 		} else {    //Si le noeud est full, on laisse tomber le children
-			split(node, key);
+			split(node, key,children);
 
 		}
 
@@ -72,12 +72,14 @@ public class BTree {
 	 * @param Q1
 	 * @param key
 	 */
-	public void split(Node Q1, Integer key) {
-		
+	public void split(Node Q1, Integer key,Node Qchild) {
+
 		List<Integer> temporary = new ArrayList<Integer>(Arrays.asList(Q1.getKeys()));
+		List<Node> tempChildren = new ArrayList<Node>(Arrays.asList(Q1.getChildren()));
 		//ArrayList<Integer> temporary = (ArrayList<Integer>) Arrays.asList(Q1.getKeys());
 		temporary.add(key);
 		temporary.sort(null);
+		tempChildren.add(Qchild);
 		Integer median = temporary.get(Math.round(order / 2));
 		Node Q = Q1.getFather();
 		if(Q == null) {
@@ -88,12 +90,13 @@ public class BTree {
 		}
 		Node Q2 = new Node(order, Q);
 		Q1.removeAllKeys();
+		Q1.removeAllChild();
 		for (Integer val : temporary) {
-			
-			
+
+
 			//LA FONCTION ADD N'ADD RIEN SUR Q1 PUTAIN
-			
-			
+
+
 			if (val < median) {
 				Q1.add(val);
 			}
@@ -101,15 +104,25 @@ public class BTree {
 				Q2.add(val);
 			}	
 		}
+		for (Node child : tempChildren) {
+			if (child != null) {
+				if (child.getKeys()[child.getCountOfRecords()-1]<median) {
+					Q1.addChildren(child);
+				}
+				else {
+					Q2.addChildren(child);
+				}
+			}
+		}
 		/**
 		System.out.println(Q1);
 		System.out.println("\n");
 		System.out.println(Q2);
 		System.out.println("\n");
 		System.out.println(Q);
-		**/
+		 **/
 		insertIn(median, Q, Q2);
-		
+
 
 	}
 
@@ -123,12 +136,12 @@ public class BTree {
 			return rechercheElem(key,node.goodChildren(key));
 		}
 	}
-	
+
 	public String toString() {
 		return root.toString();
 	}
-	
-	
+
+
 	public int countOfLeaf() {
 		return root.countOfLeaf();
 	}

@@ -123,7 +123,7 @@ public class Node {
 			}
 
 		}
-		children[order-1] = node;
+		children[this.countOfRecords] = node;
 		return true;
 	}
 
@@ -241,6 +241,14 @@ public class Node {
 			keys[i] = null;
 		}
 		countOfRecords = 0;
+	}
+	
+	public int getCountOfRecords() {
+		return countOfRecords;
+	}
+	
+	public void removeAllChild() {
+		children = new Node[order];
 	}
 
 	/*	public Node split() {
