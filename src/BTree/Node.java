@@ -26,7 +26,7 @@ public class Node {
 	}
 
 	public boolean add(Integer key) {
-		
+
 		if(Arrays.asList(keys).contains(key)){
 			throw new IllegalArgumentException(key + " is already in this Node");
 		}
@@ -58,6 +58,85 @@ public class Node {
 	}
 
 
+	public boolean removeKey(Integer key){
+		boolean removed = false;
+		for (int i=0; i < countOfRecords; i++){
+			if(removed){
+				keys[i-1]=keys[i];
+			}
+			if(keys[i].equals(key)){
+				keys[i]=null;
+				removed = true;
+			}
+		}
+		keys[countOfRecords-1]=null;
+		countOfRecords --;
+		return true;
+	}
+
+
+	/**
+	 * Récupère la valeur maximale de l'arbre désigné, et la supprime
+	 * @return la valeur maximal de l'arbre
+	 */
+	public Integer getAndDeleteSubtreeMaximumValue(){
+		if (this.isLeaf()){
+			int temp = keys[countOfRecords-1];
+			keys[countOfRecords-1] = null;
+			countOfRecords--;
+			return temp;
+		}else{
+			return children[countOfRecords].getAndDeleteSubtreeMaximumValue();
+		}
+	}
+
+	/**
+	 * Fonction récursive donnant le noeud contenant la valeur maximal à partir de l'arbre dont le noeud est racine
+	 * @return
+	 */
+	public Node getNodeContainingMaximumValueChildren(){
+		if (this.isLeaf()){
+			return this;
+		}else{
+			return children[countOfRecords].getNodeContainingMaximumValueChildren();
+		}
+	}
+
+	/**
+	 * Cherche le noeud qui contient la valeur maximal dans l'arbre dont le fils gauche de la valeur key est racine
+	 * @param key
+	 * @return
+	 */
+	public Node getNodeContainingMaximumValue(Integer key){
+		for(int i=0; i<countOfRecords; i++){
+			if(keys[i].equals(key)){
+				return children[i].getNodeContainingMaximumValueChildren();
+			}
+		}
+		return null;
+	}
+
+
+
+	/**
+	 * Remplace key1 par la valeur de son sous arbre de gauche
+	 * @param key1
+	 * @throws IllegalArgumentException if key1 isn't in the node
+	 */
+	public boolean replaceByMaximumValue(Integer key1) throws IllegalArgumentException{
+		if (! this.contains(key1)){
+			throw new IllegalArgumentException(key1 + " is not in the node");
+		}
+		for(int i=0; i<countOfRecords; i++){
+			if(keys[i].equals(key1)){
+				keys[i] = children[i].getAndDeleteSubtreeMaximumValue();
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	public int positionInsert(Integer key) {
 		if(key == null) {
 			return 0;
@@ -69,12 +148,72 @@ public class Node {
 		while(keys[i] < key) {
 			i++;
 		}
-		return i;	
+		return i;
+	}
+
+	/**
+	 * Renvoie un noeud adjascent avec lequel la fusion est possible ou null s'il n'en existe pas
+	 * @return
+	 */
+	public Node mergeableNode(){
+		int i=0;
+		while (father.getChildren()[i] != this){
+			i++;
+		}
+		if (i == 0) {
+			if(father.getChildren()[i + 1].hasEnoughPlace()){
+				return father.getChildren()[i+1];
+			}
+		}else if(i == countOfRecords +1){
+			if(father.getChildren()[i-1].hasEnoughPlace()){
+				return father.getChildren()[i-1];
+			}
+		}else{
+			if(father.getChildren()[i+1].hasEnoughPlace()){
+				return father.getChildren()[i+1];
+			}else if(father.getChildren()[i - 1].hasEnoughPlace()){
+				return father.getChildren()[i - 1];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * teste si le noeud a assez de place pour être fusionné aec un autre
+	 * @return
+	 */
+	public boolean hasEnoughPlace(){
+		return ((order -1) - countOfRecords >= Math.ceil((double)(order)/2)-1);
+	}
+
+	public void merge(Node mergeableNode) {
+		Node Q = father;
+		Node Q1, Q2;
+		if(keys[0] < mergeableNode.getKeys()[0]){
+			Q1 = this;
+			Q2 = mergeableNode;
+		}else{
+			Q1 = mergeableNode;
+			Q2 = this;
+		}
+		int i=0;
+		while (Q.getChildren()[i] != Q1){
+			i++;
+		}
+		Q1.add(Q.getKeys()[i]);
+		Q.removeKey(Q.getKeys()[i]);
+		for (Integer key: Q2.getKeys()) {
+			Q1.add(key);
+		}
+		for (int j = i+1; j < Q.getCountOfRecords(); j++){
+			Q.getChildren()[j] = Q.getChildren()[j+1];
+		}
+		Q.getChildren()[Q.getCountOfRecords()] = null;
 	}
 
 	/**
 	 * Indique par un boolean si le noeud est une feuille de l'arbre
-	 * @return 
+	 * @return
 	 */
 	public boolean isLeaf() {
 		return (children[0] == null);
@@ -100,14 +239,13 @@ public class Node {
 		return children[i];
 	}
 
-	//Fonction appelee uniquement dans le cas ou il est possible d'ajouter l'enfant. Cette fonction ne peut pas traiter d'erreur
 	public boolean addChildren(Node node) {
 
 		int valChild = node.getKeys()[0];
 		int i;
 		Node aux1;
 		Node aux2;
-		for(i =0; i<order-1; i++) {	
+		for(i =0; i<order-1; i++) {
 			if(children[i] == null) {
 				children[i] = node;
 				return true;
@@ -165,7 +303,7 @@ public class Node {
 				}
 			}
 			s = s+ "\n"+ "\n";
-			
+
 			level.removeAll(level);
 			level.addAll(temp);
 
@@ -220,6 +358,14 @@ public class Node {
 		return (countOfRecords == order -1);
 	}
 
+	public boolean contains(Integer key){
+		if(Arrays.asList(keys).contains(key)) {
+			return true;
+		}
+		return false;
+	}
+
+
 	public Integer[] getKeys() {
 		return keys;
 	}
@@ -242,34 +388,14 @@ public class Node {
 		}
 		countOfRecords = 0;
 	}
-	
+
 	public int getCountOfRecords() {
 		return countOfRecords;
 	}
-	
+
 	public void removeAllChild() {
 		children = new Node[order];
 	}
-
-	/*	public Node split() {
-		Integer mediane = 40;
-		Node root = new Node(order);
-		root.add(mediane);
-		Node children1 = new Node(order);
-		Node children2 = new Node(order);
-		for (Integer key : keys) {
-			if (key<mediane) {
-				children1.add(i);
-			}
-			if (key>mediane) {
-				children2.add(i);
-			}
-		}
-		root.setChildren(children1);
-		root.setChildren(children2);
-		return root;
-	}
-	 */
 
 
 }

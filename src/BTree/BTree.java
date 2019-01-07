@@ -26,12 +26,39 @@ public class BTree {
 		if (rechercheElem(key, root)) {
 			throw new IllegalArgumentException(key + " is already in the tree");
 		}
-		Node node = recherche(key, root);
+		Node node = rechercheInsert(key, root);
 		if (!node.isFull()) {
 			node.add(key);
 		} else {
 			split(node, key,null);
+		}
+	}
 
+
+	public void delete(Integer key){
+		if (! rechercheElem(key, root)) {
+			throw new IllegalArgumentException(key + " is not in the tree");
+		}
+		Node node = recherche(key, root);
+		Node leaf;
+
+		if(! node.isLeaf()){
+			node.replaceByMaximumValue(key);
+			leaf = node.getNodeContainingMaximumValue(key);
+
+
+		}else{
+			node.removeKey(key);
+			leaf = node;
+		}
+		while(leaf.getCountOfRecords() < Math.ceil((double)(order)/2) -1) {
+			Node mergeableNode = leaf.mergeableNode();
+			if (mergeableNode != null) {
+				leaf.merge(mergeableNode);
+				leaf = leaf.getFather();
+			} else {
+				System.out.println("OKKKK");
+			}
 		}
 
 	}
@@ -55,15 +82,37 @@ public class BTree {
 
 	}
 
-	public Node recherche(Integer key, Node node) {
+
+	/**
+	 *
+	 * @param key
+	 * @param node
+	 * @return le noeud dans lequel insérer la key
+	 */
+	public Node rechercheInsert(Integer key, Node node) {
 		if (node.isLeaf()) {
+			return node;
+		} else {
+			Node children = node.goodChildren(key);
+			return rechercheInsert(key, children);
+		}
+	}
+
+	/**
+	 *
+	 * @param key
+	 * @param node
+	 * @return le noeud dans lequel se trouve la key
+	 */
+	public Node recherche(Integer key, Node node) {
+		if (node.contains(key)) {
 			return node;
 		} else {
 			Node children = node.goodChildren(key);
 			return recherche(key, children);
 		}
-
 	}
+
 
 	/**
 	 * Split un noeud Q1 (de pere Q) full en deux noeuds Q1 et Q2, puis appelle la
@@ -73,10 +122,8 @@ public class BTree {
 	 * @param key
 	 */
 	public void split(Node Q1, Integer key,Node Qchild) {
-
 		List<Integer> temporary = new ArrayList<Integer>(Arrays.asList(Q1.getKeys()));
 		List<Node> tempChildren = new ArrayList<Node>(Arrays.asList(Q1.getChildren()));
-		//ArrayList<Integer> temporary = (ArrayList<Integer>) Arrays.asList(Q1.getKeys());
 		temporary.add(key);
 		temporary.sort(null);
 		tempChildren.add(Qchild);
@@ -92,11 +139,6 @@ public class BTree {
 		Q1.removeAllKeys();
 		Q1.removeAllChild();
 		for (Integer val : temporary) {
-
-
-			//LA FONCTION ADD N'ADD RIEN SUR Q1 PUTAIN
-
-
 			if (val < median) {
 				Q1.add(val);
 			}
@@ -116,17 +158,10 @@ public class BTree {
 				}
 			}
 		}
-		/**
-		System.out.println(Q1);
-		System.out.println("\n");
-		System.out.println(Q2);
-		System.out.println("\n");
-		System.out.println(Q);
-		 **/
 		insertIn(median, Q, Q2);
-
-
 	}
+
+
 
 	public boolean rechercheElem(int key, Node node) {
 		if (node == null) {
@@ -138,6 +173,9 @@ public class BTree {
 			return rechercheElem(key,node.goodChildren(key));
 		}
 	}
+
+
+
 
 	public String toString() {
 		return root.toString();
