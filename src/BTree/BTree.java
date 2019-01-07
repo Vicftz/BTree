@@ -43,8 +43,9 @@ public class BTree {
 		Node leaf;
 
 		if(! node.isLeaf()){
-			node.replaceByMaximumValue(key);
 			leaf = node.getNodeContainingMaximumValue(key);
+			node.replaceByMaximumValue(key);
+			System.out.println("leaf"+leaf);
 
 
 		}else{
@@ -53,6 +54,7 @@ public class BTree {
 		}
 		while(leaf.getCountOfRecords() < Math.ceil((double)(order)/2) -1) {
 			Node mergeableNode = leaf.mergeableNode();
+			System.out.println("mergeable :"+mergeableNode);
 			if (mergeableNode != null) {
 				leaf.merge(mergeableNode);
 				leaf = leaf.getFather();
