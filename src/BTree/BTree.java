@@ -108,9 +108,11 @@ public class BTree {
 			if (child != null) {
 				if (child.getKeys()[child.getCountOfRecords()-1]<median) {
 					Q1.addChildren(child);
+					child.setFather(Q1);
 				}
 				else {
 					Q2.addChildren(child);
+					child.setFather(Q2);
 				}
 			}
 		}
