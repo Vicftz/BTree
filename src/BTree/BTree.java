@@ -183,9 +183,4 @@ public class BTree {
 		return root.toString();
 	}
 
-
-	public int countOfLeaf() {
-		return root.countOfLeaf();
-	}
-
 }

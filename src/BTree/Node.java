@@ -159,20 +159,6 @@ public class Node {
 	}
 
 
-	public int positionInsert(Integer key) {
-		if(key == null) {
-			return 0;
-		}
-		if(key > keys[countOfRecords-1]) {
-			return countOfRecords;
-		}
-		int i =0;
-		while(keys[i] < key) {
-			i++;
-		}
-		return i;
-	}
-
 	/**
 	 * Renvoie un noeud adjascent avec lequel la fusion est possible ou null s'il n'en existe pas
 	 * @return
@@ -211,13 +197,19 @@ public class Node {
 	public void merge(Node mergeableNode) {
 		Node Q = father;
 		Node Q1, Q2;
-		if((keys[0]==null)|| keys[0] < mergeableNode.getKeys()[0]){
-			Q1 = this;
-			Q2 = mergeableNode;
-		}else{
+		if(keys[0]==null){
 			Q1 = mergeableNode;
 			Q2 = this;
+		}else {
+			if (keys[0] < mergeableNode.getKeys()[0]) {
+				Q1 = this;
+				Q2 = mergeableNode;
+			} else {
+				Q1 = mergeableNode;
+				Q2 = this;
+			}
 		}
+
 		int i=0;
 		while (Q.getChildren()[i] != Q1){
 			i++;
@@ -394,17 +386,6 @@ public class Node {
 	}
 
 
-
-	public int countOfChildren() {
-		int s = 0;
-		Node child = children[s];
-		while ((child != null)&&s<order-1) {
-			s++;
-			child=children[s];
-		}
-		return s;
-	}
-
 	public int countOfLeaf() {
 		if (this.isLeaf()) {
 			return 1;
@@ -470,10 +451,5 @@ public class Node {
 	public int getOrder() {
 		return order;
 	}
-	
-	public int getMaxNode() {
-		return keys[countOfRecords-1];
-	}
-
 
 }
