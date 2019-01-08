@@ -75,6 +75,20 @@ public class Node {
 	}
 
 
+	public Integer getAndDeleteSubtreeMinimumValue(){
+		if (this.isLeaf()){
+			int temp = keys[0];
+			for (int i=0;i<countOfRecords-1;i++) {
+				keys[i] = keys[i+1];
+			}
+			keys[countOfRecords]=null;
+			countOfRecords--;
+			return temp;
+		}else{
+			return children[0].getAndDeleteSubtreeMinimumValue();
+		}
+	}
+	
 	/**
 	 * Récupère la valeur maximale de l'arbre désigné, et la supprime
 	 * @return la valeur maximal de l'arbre
@@ -90,6 +104,15 @@ public class Node {
 		}
 	}
 
+	public Node getNodeContainingMinimumValueChildren(){
+		if (this.isLeaf()){
+			return this;
+		}else{
+			return children[0].getNodeContainingMinimumValueChildren();
+		}
+	}
+	
+	
 	/**
 	 * Fonction récursive donnant le noeud contenant la valeur maximal à partir de l'arbre dont le noeud est racine
 	 * @return
@@ -114,15 +137,6 @@ public class Node {
 			}
 		}
 		return null;
-	}
-
-	
-	public Node getNodeContainingMinimumValueChildren(){
-		if (this.isLeaf()){
-			return this;
-		}else{
-			return children[countOfRecords].getNodeContainingMaximumValueChildren();
-		}
 	}
 
 
@@ -232,7 +246,7 @@ public class Node {
 			i++;
 		}
 		if (i == 0) {
-			leaf = this.rotateWithNodeSpecial(father.getChildren()[i+1]);
+			leaf = this.rotateWithNodeMin(father.getChildren()[i+1]);
 		}else{
 			leaf = this.rotateWithNode(father.getChildren()[i-1]);
 			}
@@ -255,17 +269,13 @@ public class Node {
 		
 	}
 	
-	public Node rotateWithNodeSpecial(Node Q1) {
+	public Node rotateWithNodeMin(Node Q1) {
 		Node leaf = Q1.getNodeContainingMinimumValueChildren();
 		Node Q = Q1.getFather();
 		Node Q2 = this;
-		int i=0;
-		while (Q.getChildren()[i] != this){
-			i++;
-		}
-		Integer maxq1 = Q1.getAndDeleteSubtreeMinimumValue();
-		Integer valQ = Q.getKeys()[i-1] ;
-		Q.getKeys()[i-1] = maxq1;
+		Integer minq1 = Q1.getAndDeleteSubtreeMinimumValue();
+		Integer valQ = Q.getKeys()[0] ;
+		Q.getKeys()[0] = minq1;
 		Q2.add(valQ);
 		return leaf;
 		
