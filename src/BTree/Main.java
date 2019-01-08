@@ -9,6 +9,11 @@ public class Main {
 		}
 		System.out.println(tree);
 		tree.delete(23);
+		
+		System.out.println(tree);
+		tree.delete(26);
+		System.out.println(tree);
+		//tree.delete(8);
 		System.out.println(tree);
 
 	}

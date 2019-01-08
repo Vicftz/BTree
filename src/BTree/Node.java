@@ -210,12 +210,10 @@ public class Node {
 				Q1.addChildren(children);
 			}
 		}
-		System.out.println("test Q1 :" +Q);
 		for (int j = i+1; j < Q.getOrder()-1; j++){
 			Q.getChildren()[j] = Q.getChildren()[j+1];
 		}
 		Q.getChildren()[Q.getOrder() -1] = null;
-		System.out.println("test Q1 v2 :" +Q);
 	}
 
 	/**
