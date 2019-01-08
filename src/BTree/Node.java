@@ -81,7 +81,7 @@ public class Node {
 			for (int i=0;i<countOfRecords-1;i++) {
 				keys[i] = keys[i+1];
 			}
-			keys[countOfRecords]=null;
+			keys[countOfRecords-1]=null;
 			countOfRecords--;
 			return temp;
 		}else{
@@ -211,7 +211,7 @@ public class Node {
 	public void merge(Node mergeableNode) {
 		Node Q = father;
 		Node Q1, Q2;
-		if(keys[0] < mergeableNode.getKeys()[0]){
+		if((keys[0]==null)|| keys[0] < mergeableNode.getKeys()[0]){
 			Q1 = this;
 			Q2 = mergeableNode;
 		}else{
