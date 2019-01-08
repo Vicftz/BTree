@@ -116,6 +116,14 @@ public class Node {
 		return null;
 	}
 
+	
+	public Node getNodeContainingMinimumValueChildren(){
+		if (this.isLeaf()){
+			return this;
+		}else{
+			return children[countOfRecords].getNodeContainingMaximumValueChildren();
+		}
+	}
 
 
 	/**
@@ -224,43 +232,41 @@ public class Node {
 			i++;
 		}
 		if (i == 0) {
-			leaf = this.rotateWithNode(father.getChildren()[i+1]);
+			leaf = this.rotateWithNodeSpecial(father.getChildren()[i+1]);
 		}else{
-			leaf = this.rotateWithNodeSpecial(father.getChildren()[i-1]);
+			leaf = this.rotateWithNode(father.getChildren()[i-1]);
 			}
 		return leaf;
 	}
 	
 	public Node rotateWithNode(Node Q1) {
-		Node leaf = this.getNodeContainingMaximumValueChildren();
+		Node leaf = Q1.getNodeContainingMaximumValueChildren();
 		Node Q = Q1.getFather();
 		Node Q2 = this;
 		int i=0;
 		while (Q.getChildren()[i] != this){
 			i++;
 		}
-		Integer maxq1 = this.getAndDeleteSubtreeMaximumValue();
+		Integer maxq1 = Q1.getAndDeleteSubtreeMaximumValue();
 		Integer valQ = Q.getKeys()[i-1] ;
 		Q.getKeys()[i-1] = maxq1;
-		Q2.getKeys()[Q2.getCountOfRecords()] = valQ;
-		countOfRecords++;
+		Q2.add(valQ);
 		return leaf;
 		
 	}
 	
 	public Node rotateWithNodeSpecial(Node Q1) {
-		Node leaf = this.getNodeContainingMaximumValueChildren();
+		Node leaf = Q1.getNodeContainingMinimumValueChildren();
 		Node Q = Q1.getFather();
 		Node Q2 = this;
 		int i=0;
 		while (Q.getChildren()[i] != this){
 			i++;
 		}
-		Integer maxq1 = this.getAndDeleteSubtreeMaximumValue();
+		Integer maxq1 = Q1.getAndDeleteSubtreeMinimumValue();
 		Integer valQ = Q.getKeys()[i-1] ;
 		Q.getKeys()[i-1] = maxq1;
-		Q2.getKeys()[Q2.getCountOfRecords()] = valQ;
-		countOfRecords++;
+		Q2.add(valQ);
 		return leaf;
 		
 	}

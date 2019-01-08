@@ -57,6 +57,7 @@ public class BTree {
 				leaf = leaf.getFather();
 			} else {
 				leaf = leaf.rotation();
+				System.out.println("leaf"+leaf);
 			}
 		}
 		if (root.getKeys()[0]==null) {
