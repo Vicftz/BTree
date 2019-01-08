@@ -50,14 +50,17 @@ public class BTree {
 			node.removeKey(key);
 			leaf = node;
 		}
-		while(leaf.getCountOfRecords() < Math.ceil((double)(order)/2) -1) {
+		while((leaf.getCountOfRecords() < Math.ceil((double)(order)/2) -1)&&leaf.getFather()!=null) {
 			Node mergeableNode = leaf.mergeableNode();
 			if (mergeableNode != null) {
 				leaf.merge(mergeableNode);
 				leaf = leaf.getFather();
 			} else {
-				System.out.println("OKKKK");
+				leaf = leaf.rotation();
 			}
+		}
+		if (root.getKeys()[0]==null) {
+			root = root.getChildren()[0];
 		}
 
 	}

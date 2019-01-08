@@ -164,7 +164,7 @@ public class Node {
 			if(father.getChildren()[i + 1].hasEnoughPlace()){
 				return father.getChildren()[i+1];
 			}
-		}else if(i == countOfRecords +1){
+		}else if(i == father.getCountOfRecords()){
 			if(father.getChildren()[i-1].hasEnoughPlace()){
 				return father.getChildren()[i-1];
 			}
@@ -208,12 +208,61 @@ public class Node {
 		for (Node children : Q2.getChildren()) {
 			if (children != null) {
 				Q1.addChildren(children);
+				children.setFather(Q1);
 			}
 		}
 		for (int j = i+1; j < Q.getOrder()-1; j++){
 			Q.getChildren()[j] = Q.getChildren()[j+1];
 		}
 		Q.getChildren()[Q.getOrder() -1] = null;
+	}
+	
+	public Node rotation() {
+		Node leaf;
+		int i=0;
+		while (father.getChildren()[i] != this){
+			i++;
+		}
+		if (i == 0) {
+			leaf = this.rotateWithNode(father.getChildren()[i+1]);
+		}else{
+			leaf = this.rotateWithNodeSpecial(father.getChildren()[i-1]);
+			}
+		return leaf;
+	}
+	
+	public Node rotateWithNode(Node Q1) {
+		Node leaf = this.getNodeContainingMaximumValueChildren();
+		Node Q = Q1.getFather();
+		Node Q2 = this;
+		int i=0;
+		while (Q.getChildren()[i] != this){
+			i++;
+		}
+		Integer maxq1 = this.getAndDeleteSubtreeMaximumValue();
+		Integer valQ = Q.getKeys()[i-1] ;
+		Q.getKeys()[i-1] = maxq1;
+		Q2.getKeys()[Q2.getCountOfRecords()] = valQ;
+		countOfRecords++;
+		return leaf;
+		
+	}
+	
+	public Node rotateWithNodeSpecial(Node Q1) {
+		Node leaf = this.getNodeContainingMaximumValueChildren();
+		Node Q = Q1.getFather();
+		Node Q2 = this;
+		int i=0;
+		while (Q.getChildren()[i] != this){
+			i++;
+		}
+		Integer maxq1 = this.getAndDeleteSubtreeMaximumValue();
+		Integer valQ = Q.getKeys()[i-1] ;
+		Q.getKeys()[i-1] = maxq1;
+		Q2.getKeys()[Q2.getCountOfRecords()] = valQ;
+		countOfRecords++;
+		return leaf;
+		
 	}
 
 	/**
@@ -404,6 +453,10 @@ public class Node {
 	
 	public int getOrder() {
 		return order;
+	}
+	
+	public int getMaxNode() {
+		return keys[countOfRecords-1];
 	}
 
 
